@@ -9,9 +9,9 @@ let
   tomlFormat = pkgs.formats.toml { };
 
   brootConf = {
-    verbs = cfg.verbs;
-    skin = cfg.skin;
-    modal = cfg.modal;
+    inherit (cfg) skin modal;
+  } // lib.optionalAttrs (cfg.verbs != []) {
+    inherit (cfg) verbs;
   };
 
 in {
@@ -48,25 +48,7 @@ in {
 
     verbs = mkOption {
       type = with types; listOf (attrsOf (either bool str));
-      default = [
-        {
-          invocation = "p";
-          execution = ":parent";
-        }
-        {
-          invocation = "edit";
-          shortcut = "e";
-          execution = "$EDITOR {file}";
-        }
-        {
-          invocation = "create {subpath}";
-          execution = "$EDITOR {directory}/{subpath}";
-        }
-        {
-          invocation = "view";
-          execution = "less {file}";
-        }
-      ];
+      default = [];
       example = literalExpression ''
         [
           { invocation = "p"; execution = ":parent"; }
