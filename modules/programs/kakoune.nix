@@ -302,12 +302,13 @@ let
               '';
             };
 
+            # Cannot use `mkRemovedOptionModule` because we are in a submodule.
+            # https://github.com/NixOS/nixpkgs/issues/96006
             useBuiltinKeyParser = mkOption {
               type = types.bool;
               default = false;
-              description = ''
-                Bypass ncurses key parser and use an internal one.
-              '';
+              visible = false;
+              apply = x: throw "The option `${lib.options.showOption "useBuiltinKeyParser"}' can no longer be used since it's been removed upstream.";
             };
           };
         });
@@ -543,9 +544,6 @@ let
         "ncurses_wheel_up_button=${wheelUpButton}"}"
         "${optionalString (shiftFunctionKeys != null)
         "ncurses_shift_function_key=${toString shiftFunctionKeys}"}"
-        "ncurses_builtin_key_parser=${
-          if useBuiltinKeyParser then "true" else "false"
-        }"
       ];
 
     userModeString = mode:
